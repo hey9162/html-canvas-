@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit:cover">
+  <meta charset="utf-8">
+  <title>11.11出租单身</title>
+  <link rel="stylesheet" href="./css/style.less">
+  <script src="./js/rem-init.js"></script>
+  <script src="./js/jquery.min.js"></script>
+</head>
+
+<body>
+  <main id="main">
+    <div class="head-img">
+      <input type="file" id="file" class="file-inp">
+      <img class="img" id="dragImg" draggable="true" src="./images/j.jpg" alt="">
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+    <div class="disc">
+      <div class="item">萌妹子一媒，待租</div>
+      <div class="item">萌妹子一媒，待租</div>
+    </div>
+  </main>
+  <div class="footer">
+    生成截图
+  </div>
+  <img src="" id="test" alt="">
+  <script src="./js/main.js"></script>
+  <script src="./js/html2canvas.js"></script>
+  <script>
+    function compress(img, width, height, ratio) {
+      var canvas, ctx, img64;
+      canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      img64 = canvas.toDataURL("image/jpeg", ratio);
+      return img64;
+    }
+    $(function () {
+      var dragImg = document.querySelector('#dragImg');
+      //记录到点击时鼠标到移动框左边和上边的距离
+      dragImg.addEventListener('touchstart', f1 = function (e) {
+        console.log(e);
+        e.preventDefault();
+        e.stopPropagation();
+        var x, y, f1, f2;
+        e = e.touches[0];
+        x = dragImg.offsetLeft - e.clientX;
+        y = dragImg.offsetTop - e.clientY;
+        document.addEventListener('touchmove', f2 = function (ev) {
+          var t = ev.touches[0];
+          dragImg.style.left = x + t.clientX + 'px';
+          dragImg.style.top = y + t.clientY + 'px';
+          // $(dragImg).css("-webkit-transform", "translateY(" + y + t.clientY + "px)");
+          // $(dragImg).css("-webkit-transform", "translateX(" + x + t.clientX + "px)");
+        }, false);
+        document.addEventListener("touchend", function (e) {
+          document.removeEventListener("touchend", f1);
+          document.removeEventListener("touchmove", f2);
+        }, false);
+      }, false);
+      $("#file").change(function (ev) {
+        var that = this;
+        var eleFile = ev.target.files[0]
+        console.log(eleFile);
+        var fr = new FileReader();
+        fr.readAsDataURL(eleFile)
+        var url = URL.createObjectURL(eleFile);
+        fr.onload = function () {
+          var image = new Image();
+          image.src = url;
+          image.onload = function(){
+            console.log(image.width + '' + image.height);
+            var img64 = compress(image, image.width, image.height, 0.2);
+            // document.getElementById("test").src = img64;
+            $(that).hide(), $(that).next().attr("src", img64);
+            // var alink = document.createElement("a");
+            // alink.href = img64;
+            // alink.download = new Date().getTime();
+            // alink.click();
+          }
+        };
+      });
+      function makeImg() {
+        console.log(html2canvas);
+        html2canvas($("#main")[0], {
+          onrendered: function (canvas) {
+            console.log(canvas);
+            $("body").append(canvas);
+            var a = document.createElement("a");
+            a.href = canvas.toDataURL();
+            console.log(canvas.toDataURL());
+            a.download = new Date().getTime();
+            a.click();
+          }
+        })
+      };
+      $(".footer").click(makeImg);
+    });
+  </script>
+</body>
+
+</html>
